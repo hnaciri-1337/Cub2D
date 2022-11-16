@@ -6,7 +6,7 @@
 /*   By: hnaciri- <hnaciri-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 15:47:31 by hnaciri-          #+#    #+#             */
-/*   Updated: 2022/11/15 18:18:10 by hnaciri-         ###   ########.fr       */
+/*   Updated: 2022/11/16 14:13:00 by hnaciri-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,6 @@ char	**get_file(t_file *data, int fd, char *file_name)
 	return (map);
 }
 
-// void DDA(int X0, int Y0, int X1, int Y1)
-// {
-//     int dx = X1 - X0;
-//     int dy = Y1 - Y0;
- 
-//     int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
- 
-//     float Xinc = dx / (float)steps;
-//     float Yinc = dy / (float)steps;
- 
-//     float X = X0;
-//     float Y = Y0;
-//     for (int i = 0; i <= steps; i++)
-// 	{
-//         putpixel(round(X), round(Y), RED);
-//         X += Xinc;
-//         Y += Yinc;
-//         delay(100);
-//     }
-// }
-
 void dda(t_file *data,int X0, int Y0, int X1, int Y1)
 {
     int dx = X1 - X0;
@@ -76,7 +55,7 @@ void dda(t_file *data,int X0, int Y0, int X1, int Y1)
     float Y = Y0;
     while (1)
 	{
-		mlx_pixel_put(data->mlx, data->mlx_win, (int)round(X), (int)round(Y), 14417920);
+		mlx_pixel_put(data->mlx, data->mlx_win, (int)round(X), (int)round(Y), 150);
         X += Xinc;
         Y += Yinc;
 		if ((int)(Y / SCAL) < 0 || (int)(Y / SCAL) > data->count || (int)(X / SCAL) < 0 || (int)(X / SCAL) > ft_strlen(data->the_map[(int)(Y / 64)]))
@@ -102,7 +81,12 @@ void	draw(t_file *data)
 		}
 	}
 	mlx_put_image_to_window(data->mlx, data->mlx_win, data->imgs[2].img, data->x * SCAL, data->y * SCAL);
-	dda(data, (int)(data->x * SCAL), (int)(data->y * SCAL), (int)((data->x * SCAL) + (200 * cos(((data->a) * PI) / 180))), (int)((data->y * SCAL) + (200 * sin(((data->a) * PI) / 180))));
+	i = -65;
+	while (i <= 65)
+	{
+		dda(data, (int)(data->x * SCAL), (int)(data->y * SCAL), (int)((data->x * SCAL) + (200 * cos(((data->a + i) * PI) / 180))), (int)((data->y * SCAL) + (200 * sin(((data->a + i) * PI) / 180))));
+		i++;
+	}
 }
 
 void	draw_window(t_file *data)
@@ -130,7 +114,7 @@ void	draw_window(t_file *data)
 				break ;
 			}
 	}
-	data->imgs[0].img = mlx_xpm_file_to_image(data->mlx, "pics/bluestone.xpm", &data->imgs[0].width, &data->imgs[0].height);
+	data->imgs[0].img = mlx_xpm_file_to_image(data->mlx, "pics/redbrick_1.xpm", &data->imgs[0].width, &data->imgs[0].height);
 	data->imgs[0].addr = mlx_get_data_addr(data->imgs[0].img, &data->imgs[0].bits_per_pixel, &data->imgs[0].line_length, &data->imgs[0].endian);
 	data->imgs[1].img = mlx_xpm_file_to_image(data->mlx, "pics/black.xpm", &data->imgs[1].width, &data->imgs[1].height);
 	data->imgs[1].addr = mlx_get_data_addr(data->imgs[1].img, &data->imgs[1].bits_per_pixel, &data->imgs[1].line_length, &data->imgs[1].endian);
@@ -150,13 +134,23 @@ int	move(int key, void *_f)
 		data->a += 5;
 	else if (key == 126)
 	{
-		data->x = (((data->x * SCAL) + (5 * cos(((data->a) * PI) / 180))) / SCAL);
-		data->y = (((data->y * SCAL) + (5 * sin(((data->a) * PI) / 180))) / SCAL);
+		float	x = (((data->x * SCAL) + (5 * cos(((data->a) * PI) / 180))) / SCAL);
+		float	y = (((data->y * SCAL) + (5 * sin(((data->a) * PI) / 180))) / SCAL);
+		if (data->the_map[(int)y][(int)x] == '0')
+		{
+			data->x = x;
+			data->y = y;
+		}
 	}
 	else if (key == 125)
 	{
-		data->x = (((data->x * SCAL) - (5 * cos(((data->a) * PI) / 180))) / SCAL);
-		data->y = (((data->y * SCAL) - (5 * sin(((data->a) * PI) / 180))) / SCAL);
+		float	x = (((data->x * SCAL) - (5 * cos(((data->a) * PI) / 180))) / SCAL);
+		float	y = (((data->y * SCAL) - (5 * sin(((data->a) * PI) / 180))) / SCAL);
+		if (data->the_map[(int)y][(int)x] == '0')
+		{
+			data->x = x;
+			data->y = y;
+		}
 	}
 	data->a %= 360;
 	draw(data);

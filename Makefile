@@ -3,7 +3,7 @@ INCLUDE = include/cub3d.h
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -O3 -fsanitize=address
 OBJS = ${SRCS:.c=.o}
-NAME = cub3d
+NAME = cub2d
 INCLUDE = -I /usr/local/include
 MLX = -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
 
